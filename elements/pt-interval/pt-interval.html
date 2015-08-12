@@ -1,0 +1,66 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../pt-time-format/pt-time-format.html">
+
+<dom-module id="pt-interval">
+  <style>
+    :host {
+      display: block;
+      position: relative;
+    }
+    paper-slider {
+      width: 100%;
+    }
+  </style>
+  <template>
+    <div class="layout vertical">
+      <paper-button id="button" raised><span>[[interval.label]]</span> <pt-time-format interval="{{viewIntervalValue}}"></pt-time-format></paper-button>
+      <paper-slider id="slider" min="[[min]]" max="[[max]]" value="{{interval.value}}"></paper-slider>
+    </div>
+  </template>
+</dom-module>
+<script>
+  (function () {
+    Polymer({
+      is: 'pt-interval',
+      properties: {
+        interval: {
+          type: Object,
+          notify: true,
+          value: {value: 0}
+        },
+        min: {
+          type: Number,
+          value: 0
+        },
+        max: {
+          type: Number,
+          value: 60
+        }
+      },
+      observers: [
+        '_intervalChanged(interval.value)'
+      ],
+      listeners: {
+        'button.tap': '_handleTap',
+        'slider.immediate-value-change': '_immediateValueChange'
+      },
+      _intervalChanged: function (value) {
+        this.viewIntervalValue = value * 60;
+      },
+      _immediateValueChange: function() {
+        this._intervalChanged(this.$.slider.immediateValue);
+      },
+      _handleTap: function () {
+        this.fire('start', this.interval);
+      }
+    });
+  })();
+</script>
